@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension format="1.0">
+    <extension_code>
+        <![CDATA[br-tickettemplates]]>
+    </extension_code>
+    <company>
+        <![CDATA[]]>
+    </company>
+    <author>
+        <![CDATA[Björn Rudner]]>
+    </author>
+    <label>
+        <![CDATA[Datamodel: Ticket Templates]]>
+    </label>
+    <description>
+        <![CDATA[Adds templates for common tickets.]]>
+    </description>
+    <version>
+        <![CDATA[0.0.1]]>
+    </version>
+    <release_date>
+        <![CDATA[2025-04-11]]>
+    </release_date>
+    <version_description>
+        <![CDATA[]]>
+    </version_description>
+    <itop_version_min>
+        <![CDATA[3.2.0]]>
+    </itop_version_min>
+    <status>stable</status>
+    <mandatory>false</mandatory>
+    <more_info_url>
+        <![CDATA[https://github.com/rudnerbjoern/iTop-br-tickettemplates/blob/main/README.md]]>
+    </more_info_url>
+</extension>
