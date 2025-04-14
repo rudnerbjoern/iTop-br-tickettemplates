@@ -148,6 +148,61 @@
         }
     }]]></code>
                 </method>
+                <!-- set some default values on transition -->
+                <method id="PrefillTransitionForm">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <arguments>
+                        <argument id="1">
+                            <type>reference</type>
+                            <mandatory>true</mandatory>
+                        </argument>
+                    </arguments>
+                    <code><![CDATA[
+    public function PrefillTransitionForm(&$aContextParam)
+    {
+        parent::PrefillTransitionForm($aContextParam);
+
+        if ($aContextParam['stimulus'] == 'ev_assign') {
+
+            $oConf = Metamodel::GetConfig();
+            $aChangeDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'change_defaults', array());
+
+            $iSupervisorGroupId = $aChangeDefaults['normal_change']['supervisor_group_id'] ?? $aChangeDefaults['supervisor_group_id'] ?? 0;
+            if ($iSupervisorGroupId > 0) {
+                $this->Set('supervisor_group_id', $iSupervisorGroupId);
+                if (array_key_exists('supervisor_group_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['supervisor_group_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+
+            $iSupervisorId = $aChangeDefaults['normal_change']['supervisor_id'] ?? $aChangeDefaults['supervisor_id'] ?? 0;
+            if ($iSupervisorId > 0) {
+                $this->Set('supervisor_id', $iSupervisorId);
+                if (array_key_exists('supervisor_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['supervisor_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+
+            $iManagerGroupId = $aChangeDefaults['normal_change']['manager_group_id'] ?? $aChangeDefaults['manager_group_id'] ?? 0;
+            if ($iManagerGroupId > 0) {
+                $this->Set('manager_group_id', $iManagerGroupId);
+                if (array_key_exists('manager_group_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['manager_group_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+
+            $iManagerId = $aChangeDefaults['normal_change']['manager_id'] ?? $aChangeDefaults['manager_id'] ?? 0;
+            if ($iManagerId > 0) {
+                $this->Set('manager_id', $iManagerId);
+                if (array_key_exists('manager_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['manager_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+        }
+    }]]></code>
+                </method>
             </methods>
         </class>
         <class id="EmergencyChange" _delta="must_exist">
@@ -168,6 +223,61 @@
         $sDescription = $aChangeDefaults['emergency_change']['description'] ?? null;
         if (!empty($sDescription)) {
             $this->Set('description', $sDescription);
+        }
+    }]]></code>
+                </method>
+                <!-- set some default values on transition -->
+                <method id="PrefillTransitionForm">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <arguments>
+                        <argument id="1">
+                            <type>reference</type>
+                            <mandatory>true</mandatory>
+                        </argument>
+                    </arguments>
+                    <code><![CDATA[
+    public function PrefillTransitionForm(&$aContextParam)
+    {
+        parent::PrefillTransitionForm($aContextParam);
+
+        if ($aContextParam['stimulus'] == 'ev_assign') {
+
+            $oConf = Metamodel::GetConfig();
+            $aChangeDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'change_defaults', array());
+
+            $iSupervisorGroupId = $aChangeDefaults['emergency_change']['supervisor_group_id'] ?? $aChangeDefaults['supervisor_group_id'] ?? 0;
+            if ($iSupervisorGroupId > 0) {
+                $this->Set('supervisor_group_id', $iSupervisorGroupId);
+                if (array_key_exists('supervisor_group_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['supervisor_group_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+
+            $iSupervisorId = $aChangeDefaults['emergency_change']['supervisor_id'] ?? $aChangeDefaults['supervisor_id'] ?? 0;
+            if ($iSupervisorId > 0) {
+                $this->Set('supervisor_id', $iSupervisorId);
+                if (array_key_exists('supervisor_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['supervisor_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+
+            $iManagerGroupId = $aChangeDefaults['emergency_change']['manager_group_id'] ?? $aChangeDefaults['manager_group_id'] ?? 0;
+            if ($iManagerGroupId > 0) {
+                $this->Set('manager_group_id', $iManagerGroupId);
+                if (array_key_exists('manager_group_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['manager_group_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+
+            $iManagerId = $aChangeDefaults['emergency_change']['manager_id'] ?? $aChangeDefaults['manager_id'] ?? 0;
+            if ($iManagerId > 0) {
+                $this->Set('manager_id', $iManagerId);
+                if (array_key_exists('manager_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['manager_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
         }
     }]]></code>
                 </method>
