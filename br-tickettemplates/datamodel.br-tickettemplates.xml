@@ -189,6 +189,26 @@
             if (array_key_exists('acceptance_date', $aContextParam['expected_attributes'])) {
                 $aContextParam['expected_attributes']['acceptance_date'] |= OPT_ATT_MUSTPROMPT;
             }
+        } elseif ($aContextParam['stimulus'] == 'ev_assign') {
+
+            $oConf = Metamodel::GetConfig();
+            $aChangeDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'change_defaults', array());
+
+            $iSupervisorId = $aChangeDefaults['normal_change']['supervisor_id'] ?? $aChangeDefaults['supervisor_id'] ?? 0;
+            if ($iSupervisorId > 0) {
+                $this->Set('supervisor_id', $iSupervisorId);
+                if (array_key_exists('supervisor_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['supervisor_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+
+            $iManagerId = $aChangeDefaults['normal_change']['manager_id'] ?? $aChangeDefaults['manager_id'] ?? 0;
+            if ($iManagerId > 0) {
+                $this->Set('manager_id', $iManagerId);
+                if (array_key_exists('manager_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['manager_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
         }
     }]]></code>
                 </method>
