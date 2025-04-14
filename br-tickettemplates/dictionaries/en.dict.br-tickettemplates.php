@@ -14,4 +14,5 @@
 Dict::Add('EN US', 'English', 'English', array(
     'Menu:RoutineChangeTemplates' => 'Routine Change Templates',
     'Menu:RoutineChangeTemplates+' => '',
+    'UI-ChangeManagementOverview-Next-7-days' => 'Changes in the next 7 days',
 ));

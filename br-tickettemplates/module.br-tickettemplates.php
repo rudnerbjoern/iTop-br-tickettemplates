@@ -23,6 +23,8 @@ SetupWebPage::AddModule(
             'itop-config-mgmt/3.2.0',
             'itop-tickets/3.2.0',
             'itop-change-mgmt-itil/3.2.0',
+            'itop-request-mgmt-itil/3.2.0',
+            'itop-incident-mgmt-itil/3.2.0',
         ),
         'mandatory' => false,
         'visible' => true,
@@ -46,7 +48,38 @@ SetupWebPage::AddModule(
         // Default settings
         //
         'settings' => array(
-            // Module specific settings go here, if any
+            'ticket_defaults' => array(
+                'org_id' => '2',
+            ),
+            'change_defaults' => array(
+                'org_id' => '2',
+                'description' => '<p>Vorlage Change Default 1: .....</p><p>Vorlage 2: .....</p><p>Vorlage 3: .....</p>',
+                'supervisor_group_id' => '0',
+                'supervisor_id' => '0',
+                'manager_group_id' => '0',
+                'manager_id' => '0',
+                'routine_change' => array(
+                    'description' => '<p>Vorlage Routine Change Default 1: .....</p><p>Vorlage 2: .....</p><p>Vorlage 3: .....</p>',
+                    'supervisor_group_id' => '0',
+                    'supervisor_id' => '0',
+                    'manager_group_id' => '0',
+                    'manager_id' => '0',
+                ),
+                'normal_change' => array(
+                    'description' => '<p>Vorlage Normal Change Default 1: .....</p><p>Vorlage 2: .....</p><p>Vorlage 3: .....</p>',
+                    'supervisor_group_id' => '0',
+                    'supervisor_id' => '0',
+                    'manager_group_id' => '0',
+                    'manager_id' => '0',
+                ),
+                'emergency_change' => array(
+                    'description' => '<p>Vorlage Emergency Change Default 1: .....</p><p>Vorlage 2: .....</p><p>Vorlage 3: .....</p>',
+                    'supervisor_group_id' => '0',
+                    'supervisor_id' => '0',
+                    'manager_group_id' => '0',
+                    'manager_id' => '0',
+                ),
+            ),
         ),
     )
 );

@@ -1,321 +1,268 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="3.1">
     <!--
-    * @copyright   Copyright (C) 2024 Björn Rudner
+    * @copyright   Copyright (C) 2025 Björn Rudner
     * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
     -->
     <classes>
-        <class id="RoutineChangeTemplate" _delta="define">
-            <parent>RoutineChange</parent>
-            <properties>
-                <category>bizmodel,searchable,changemgmt</category>
-                <abstract>false</abstract>
-                <key_type>autoincrement</key_type>
-                <db_table>change_template_routine</db_table>
-                <db_key_field>id</db_key_field>
-                <db_final_class_field />
-                <naming>
-                    <attributes>
-                        <attribute id="ref" />
-                    </attributes>
-                    <complementary_attributes>
-                        <attribute id="title" />
-                    </complementary_attributes>
-                </naming>
-                <style>
-                    <icon>../../images/icons/icons8-change-routine.svg</icon>
-                </style>
-                <reconciliation>
-                    <attributes>
-                        <attribute id="ref" />
-                    </attributes>
-                </reconciliation>
-                <order>
-                    <columns>
-                        <column id="ref" ascending="false" />
-                    </columns>
-                </order>
-            </properties>
-            <fields />
+        <!-- Change Ticket default values -->
+        <class id="Ticket" _delta="must_exist">
+            <fields>
+                <!-- set filter on caller to include people from sub-organizations -->
+                <field id="caller_id" _delta="must_exist">
+                    <filter _delta="redefine">
+                        <![CDATA[SELECT Person AS P JOIN Organization AS Node ON P.org_id = Node.id JOIN Organization AS Root ON Node.parent_id BELOW Root.id WHERE Root.id = :this->org_id]]>
+                    </filter>
+                </field>
+            </fields>
+        </class>
+
+
+        <class id="Change" _delta="must_exist">
             <methods>
-                <method id="GetTicketRefFormat">
-                    <static>true</static>
-                    <access>public</access>
-                    <type>Overload-DBObject</type>
-                    <code>
-                        <![CDATA[public static function GetTicketRefFormat()
-                        {
-                            return 'CT-%06d';
-                        }]]>
-                    </code>
-                </method>
-                <method id="GetAttributeFlags" _delta="define">
+                <!-- set some default values -->
+                <method id="PrefillCreationForm">
                     <static>false</static>
                     <access>public</access>
                     <type>Overload-DBObject</type>
-                    <code>
-                        <![CDATA[public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
-                        {
-                            // Force the TicketRef field to be read-only, preventing it to be written
-                            if (($sAttCode == 'ref'))
-                                return(OPT_ATT_READONLY | parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState));
-                            return parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState);
-                        }]]>
-                    </code>
-                </method>
-                <method id="GetInitialStateAttributeFlags" _delta="define">
-                    <static>false</static>
-                    <access>public</access>
-                    <type>Overload-DBObject</type>
-                    <code>
-                        <![CDATA[public function GetInitialStateAttributeFlags($sAttCode, &$aReasons = array())
-                        {
-                            // Hide the TicketRef field in object creation form
-                            if (($sAttCode == 'ref'))
-                                return(OPT_ATT_HIDDEN | parent::GetInitialStateAttributeFlags($sAttCode, $aReasons));
-                            return parent::GetInitialStateAttributeFlags($sAttCode, $aReasons);
-                        }]]>
-                    </code>
+                    <code><![CDATA[
+public function PrefillCreationForm(&$aContextParam)
+{
+    parent::PrefillCreationForm($aContextParam);
+
+    $oConf = Metamodel::GetConfig();
+    $aChangeDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'change_defaults', array());
+
+    $iOrgId = $aChangeDefaults['org_id'];
+    $sOrgQuery = 'SELECT Organization WHERE id = :orgid';
+    $oOrgSet = new DBObjectSet(DBObjectSearch::FromOQL($sOrgQuery), array(), array('orgid' => $iOrgId));
+    if ($oOrgSet->Count() > 0) {
+        $oOrg = $oOrgSet->Fetch();
+        $this->Set('org_id', $oOrg->Get('id'));
+    }
+
+    if (isset($aChangeDefaults['description']))
+    {
+        $sDescription = $aChangeDefaults['routine_change']['description'];
+        $this->Set('description', $sDescription);
+    }
+
+}]]></code>
                 </method>
             </methods>
-            <presentation>
-                <details>
-                    <items>
-                        <item id="workorders_list">
-                            <rank>30</rank>
-                        </item>
-                        <item id="col:col1">
-                            <rank>80</rank>
-                            <items>
-                                <item id="fieldset:Ticket:baseinfo">
-                                    <rank>10</rank>
-                                    <items>
-                                        <item id="ref">
-                                            <rank>10</rank>
-                                        </item>
-                                        <item id="org_id">
-                                            <rank>20</rank>
-                                        </item>
-                                        <item id="status">
-                                            <rank>30</rank>
-                                        </item>
-                                        <item id="title">
-                                            <rank>40</rank>
-                                        </item>
-                                        <item id="description">
-                                            <rank>50</rank>
-                                        </item>
-                                    </items>
-                                </item>
-                                <item id="fieldset:Ticket:contact">
-                                    <rank>20</rank>
-                                    <items>
-                                        <item id="caller_id">
-                                            <rank>10</rank>
-                                        </item>
-                                        <item id="team_id">
-                                            <rank>20</rank>
-                                        </item>
-                                        <item id="agent_id">
-                                            <rank>30</rank>
-                                        </item>
-                                        <item id="supervisor_group_id">
-                                            <rank>40</rank>
-                                        </item>
-                                        <item id="supervisor_id">
-                                            <rank>50</rank>
-                                        </item>
-                                        <item id="manager_group_id">
-                                            <rank>60</rank>
-                                        </item>
-                                        <item id="manager_id">
-                                            <rank>70</rank>
-                                        </item>
-                                    </items>
-                                </item>
-                            </items>
-                        </item>
-                        <item id="col:col2">
-                            <rank>90</rank>
-                            <items>
-                                <item id="fieldset:Ticket:resolution">
-                                    <rank>10</rank>
-                                    <items>
-                                        <item id="reason">
-                                            <rank>10</rank>
-                                        </item>
-                                        <item id="impact">
-                                            <rank>20</rank>
-                                        </item>
-                                        <item id="outage">
-                                            <rank>30</rank>
-                                        </item>
-                                        <item id="fallback">
-                                            <rank>40</rank>
-                                        </item>
-                                    </items>
-                                </item>
-                                <item id="fieldset:Ticket:relation">
-                                    <rank>20</rank>
-                                    <items>
-                                        <item id="parent_id">
-                                            <rank>10</rank>
-                                        </item>
-                                    </items>
-                                </item>
-                            </items>
-                        </item>
-                    </items>
-                </details>
-                <search>
-                    <items>
-                        <item id="ref">
-                            <rank>10</rank>
-                        </item>
-                        <item id="org_id">
-                            <rank>20</rank>
-                        </item>
-                        <item id="status">
-                            <rank>30</rank>
-                        </item>
-                        <item id="operational_status">
-                            <rank>35</rank>
-                        </item>
-                        <item id="title">
-                            <rank>40</rank>
-                        </item>
-                        <item id="description">
-                            <rank>50</rank>
-                        </item>
-                        <item id="caller_id">
-                            <rank>60</rank>
-                        </item>
-                        <item id="team_id">
-                            <rank>70</rank>
-                        </item>
-                        <item id="agent_id">
-                            <rank>80</rank>
-                        </item>
-                        <item id="supervisor_group_id">
-                            <rank>90</rank>
-                        </item>
-                        <item id="supervisor_id">
-                            <rank>100</rank>
-                        </item>
-                        <item id="manager_group_id">
-                            <rank>110</rank>
-                        </item>
-                        <item id="manager_id">
-                            <rank>120</rank>
-                        </item>
-                        <item id="reason">
-                            <rank>130</rank>
-                        </item>
-                        <item id="impact">
-                            <rank>140</rank>
-                        </item>
-                        <item id="outage">
-                            <rank>150</rank>
-                        </item>
-                        <item id="parent_id">
-                            <rank>160</rank>
-                        </item>
-                        <item id="creation_date">
-                            <rank>170</rank>
-                        </item>
-                        <item id="start_date">
-                            <rank>180</rank>
-                        </item>
-                        <item id="end_date">
-                            <rank>190</rank>
-                        </item>
-                        <item id="last_update">
-                            <rank>200</rank>
-                        </item>
-                        <item id="close_date">
-                            <rank>210</rank>
-                        </item>
-                    </items>
-                </search>
-                <list>
-                    <items>
-                        <item id="finalclass">
-                            <rank>10</rank>
-                        </item>
-                        <item id="title">
-                            <rank>20</rank>
-                        </item>
-                        <item id="org_id">
-                            <rank>30</rank>
-                        </item>
-                        <item id="start_date">
-                            <rank>40</rank>
-                        </item>
-                        <item id="end_date">
-                            <rank>50</rank>
-                        </item>
-                        <item id="status">
-                            <rank>60</rank>
-                        </item>
-                        <item id="agent_id">
-                            <rank>70</rank>
-                        </item>
-                    </items>
-                </list>
-            </presentation>
+        </class>
+        <class id="RoutineChange" _delta="must_exist">
+            <methods>
+                <!-- set some default values -->
+                <method id="PrefillCreationForm">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code><![CDATA[
+public function PrefillCreationForm(&$aContextParam)
+{
+    parent::PrefillCreationForm($aContextParam);
+
+    $oConf = Metamodel::GetConfig();
+    $aChangeDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'change_defaults', array());
+
+    $sDescription = $aChangeDefaults['routine_change']['description'] ?? null;
+    if (!empty($sDescription)) {
+        $this->Set('description', $sDescription);
+    }
+
+}]]></code>
+                </method>
+
+                <!-- set some default values on transition -->
+                <method id="PrefillTransitionForm">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <arguments>
+                        <argument id="1">
+                            <type>reference</type>
+                            <mandatory>true</mandatory>
+                        </argument>
+                    </arguments>
+                    <code><![CDATA[
+    public function PrefillTransitionForm(&$aContextParam)
+    {
+        parent::PrefillTransitionForm($aContextParam);
+
+        if ($aContextParam['stimulus'] = 'ev_assign') {
+
+            $oConf = Metamodel::GetConfig();
+            $aChangeDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'change_defaults', array());
+            $iSupervisorGroupId = $aChangeDefaults['routine_change']['supervisor_group_id'] ?? $aChangeDefaults['supervisor_group_id'] ?? 0;
+            $iSupervisorId = $aChangeDefaults['routine_change']['supervisor_id'] ?? $aChangeDefaults['supervisor_id'] ?? 0;
+            $iManagerGroupId = $aChangeDefaults['routine_change']['manager_group_id'] ?? $aChangeDefaults['manager_group_id'] ?? 0;
+            $iManagerId = $aChangeDefaults['routine_change']['manager_id'] ?? $aChangeDefaults['manager_id'] ?? 0;
+
+            if ($iSupervisorGroupId > 0) {
+                $this->Set('supervisor_group_id', $iSupervisorGroupId);
+                if (array_key_exists('supervisor_group_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['supervisor_group_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+
+            if ($iSupervisorId > 0) {
+                $this->Set('supervisor_id', $iSupervisorId);
+                if (array_key_exists('supervisor_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['supervisor_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+            if ($iManagerGroupId > 0) {
+                $this->Set('manager_group_id', $iManagerGroupId);
+                if (array_key_exists('manager_group_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['manager_group_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+
+            if ($iManagerId > 0) {
+                $this->Set('manager_id', $iManagerId);
+                if (isset($aContextParam['expected_attributes']['manager_id'])) {
+                    $aContextParam['expected_attributes']['manager_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+        }
+    }]]></code>
+                </method>
+            </methods>
+        </class>
+        <class id="NormalChange" _delta="must_exist">
+            <methods>
+                <!-- set some default values -->
+                <method id="PrefillCreationForm">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code><![CDATA[
+public function PrefillCreationForm(&$aContextParam)
+{
+    parent::PrefillCreationForm($aContextParam);
+
+    $oConf = Metamodel::GetConfig();
+    $aChangeDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'change_defaults', array());
+
+    $sDescription = $aChangeDefaults['normal_change']['description'] ?? null;
+    if (!empty($sDescription)) {
+        $this->Set('description', $sDescription);
+    }
+
+}]]></code>
+                </method>
+            </methods>
+        </class>
+        <class id="EmergencyChange" _delta="must_exist">
+            <methods>
+                <!-- set some default values -->
+                <method id="PrefillCreationForm">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code><![CDATA[
+public function PrefillCreationForm(&$aContextParam)
+{
+    parent::PrefillCreationForm($aContextParam);
+
+    $oConf = Metamodel::GetConfig();
+    $aChangeDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'change_defaults', array());
+
+    $sDescription = $aChangeDefaults['emergency_change']['description'] ?? null;
+    if (!empty($sDescription)) {
+        $this->Set('description', $sDescription);
+    }
+
+}]]></code>
+                </method>
+            </methods>
+        </class>
+        <class id="UserRequest" _delta="must_exist">
+            <fields>
+                <field id="impact" _delta="must_exist">
+                    <!-- set default impact to "a person"-->
+                    <default_value _delta="redefine">3</default_value>
+                </field>
+            </fields>
+            <methods>
+                <!-- set some default values -->
+                <method id="PrefillCreationForm">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code><![CDATA[
+  public function PrefillCreationForm(&$aContextParam)
+  {
+    $oConf = Metamodel::GetConfig();
+    $aTicketDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'ticket_defaults', array());
+    $iOrgId = $aTicketDefaults['org_id'];
+
+    $sOrgQuery = 'SELECT Organization WHERE id = :orgid';
+    $oOrgSet = new DBObjectSet(DBObjectSearch::FromOQL($sOrgQuery), array(), array('orgid' => $iOrgId));
+    if ($oOrgSet->Count() > 0) {
+        $oOrg = $oOrgSet->Fetch();
+        $this->Set('org_id', $oOrg->Get('id'));
+    }
+
+    parent::PrefillCreationForm($aContextParam);
+  }
+            ]]></code>
+                </method>
+            </methods>
+        </class>
+        <class id="Incident" _delta="must_exist">
+            <fields>
+                <field id="impact" _delta="must_exist">
+                    <!-- set default impact to "a person"-->
+                    <default_value _delta="redefine">3</default_value>
+                </field>
+            </fields>
+            <methods>
+                <!-- set some default values -->
+                <method id="PrefillCreationForm">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code><![CDATA[
+  public function PrefillCreationForm(&$aContextParam)
+  {
+    $oConf = Metamodel::GetConfig();
+    $aTicketDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'ticket_defaults', array());
+    $iOrgId = $aTicketDefaults['org_id'];
+
+    $sOrgQuery = 'SELECT Organization WHERE id = :orgid';
+    $oOrgSet = new DBObjectSet(DBObjectSearch::FromOQL($sOrgQuery), array(), array('orgid' => $iOrgId));
+    if ($oOrgSet->Count() > 0) {
+        $oOrg = $oOrgSet->Fetch();
+        $this->Set('org_id', $oOrg->Get('id'));
+    }
+
+    parent::PrefillCreationForm($aContextParam);
+  }
+            ]]></code>
+                </method>
+            </methods>
         </class>
     </classes>
     <menus>
-        <menu id="RoutineChangeTemplates" xsi:type="OQLMenuNode" _delta="define">
-            <rank>10</rank>
-            <parent>Change:Shortcuts</parent>
-            <oql><![CDATA[SELECT RoutineChangeTemplate]]></oql>
-            <do_search />
-            <auto_reload>fast</auto_reload>
+        <!-- Add Dashlet for upcoming changes -->
+        <menu id="Change:Overview" xsi:type="DashboardMenuNode" _delta="must_exist">
+            <definition>
+                <cells>
+                    <cell id="4" _delta="define">
+                        <rank>4</rank>
+                        <dashlets>
+                            <dashlet id="5" xsi:type="DashletObjectList">
+                                <rank>0</rank>
+                                <title>UI-ChangeManagementOverview-Next-7-days</title>
+                                <query><![CDATA[SELECT Change WHERE start_date > DATE_SUB(NOW(), INTERVAL 1 DAY) AND start_date < DATE_ADD(NOW(), INTERVAL 7 DAY)]]></query>
+                                <menu>false</menu>
+                            </dashlet>
+                        </dashlets>
+                    </cell>
+                </cells>
+            </definition>
         </menu>
     </menus>
-    <user_rights>
-        <groups>
-            <group id="ChangeTemplate" _delta="define">
-                <classes>
-                    <class id="RoutineChangeTemplate" />
-                </classes>
-            </group>
-        </groups>
-        <profiles>
-            <profile id="7" _delta="must_exist">
-                <!-- Change Implementor -->
-                <groups>
-                    <group id="ChangeTemplate" _delta="define">
-                        <actions>
-                            <action id="action:write">allow</action>
-                            <action id="action:bulk write">allow</action>
-                        </actions>
-                    </group>
-                </groups>
-            </profile>
-            <profile id="8" _delta="must_exist">
-                <!-- Change Supervisor -->
-                <groups>
-                    <group id="ChangeTemplate" _delta="define">
-                        <actions>
-                            <action id="action:write">allow</action>
-                            <action id="action:bulk write">allow</action>
-                        </actions>
-                    </group>
-                </groups>
-            </profile>
-            <profile id="9" _delta="must_exist">
-                <!-- Change Approver -->
-                <groups>
-                    <group id="ChangeTemplate" _delta="define">
-                        <actions>
-                            <action id="action:write">allow</action>
-                            <action id="action:bulk write">allow</action>
-                        </actions>
-                    </group>
-                </groups>
-            </profile>
-        </profiles>
-    </user_rights>
 </itop_design>
