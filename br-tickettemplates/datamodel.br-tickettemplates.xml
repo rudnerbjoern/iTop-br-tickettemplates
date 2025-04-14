@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="3.1">
+    <!--
+    * @copyright   Copyright (C) 2025 Björn Rudner
+    * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
+    -->
+    <classes>
+        <!-- Change Ticket default values -->
+        <class id="Ticket" _delta="must_exist">
+            <fields>
+                <!-- set filter on caller to include people from sub-organizations -->
+                <field id="caller_id" _delta="must_exist">
+                    <filter _delta="redefine">
+                        <![CDATA[SELECT Person AS P JOIN Organization AS Node ON P.org_id = Node.id JOIN Organization AS Root ON Node.parent_id BELOW Root.id WHERE Root.id = :this->org_id]]>
+                    </filter>
+                </field>
+            </fields>
+        </class>
+
+        <class id="Change" _delta="must_exist">
+            <methods>
+                <!-- set some default values -->
+                <method id="PrefillCreationForm">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code><![CDATA[
+    public function PrefillCreationForm(&$aContextParam)
+    {
+        parent::PrefillCreationForm($aContextParam);
+
+        $oConf = Metamodel::GetConfig();
+        $aChangeDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'change_defaults', array());
+
+        $iOrgId = $aChangeDefaults['org_id'];
+        $sOrgQuery = 'SELECT Organization WHERE id = :orgid';
+        $oOrgSet = new DBObjectSet(DBObjectSearch::FromOQL($sOrgQuery), array(), array('orgid' => $iOrgId));
+        if ($oOrgSet->Count() > 0) {
+            $oOrg = $oOrgSet->Fetch();
+            $this->Set('org_id', $oOrg->Get('id'));
+        }
+
+        $sDescription = $aChangeDefaults['description'] ?? null;
+        if (!empty($sDescription)) {
+            $this->Set('description', $sDescription);
+        }
+    }]]></code>
+                </method>
+            </methods>
+        </class>
+        <class id="RoutineChange" _delta="must_exist">
+            <methods>
+                <!-- set some default values -->
+                <method id="PrefillCreationForm">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code><![CDATA[
+    public function PrefillCreationForm(&$aContextParam)
+    {
+        parent::PrefillCreationForm($aContextParam);
+
+        $oConf = Metamodel::GetConfig();
+        $aChangeDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'change_defaults', array());
+
+        $sDescription = $aChangeDefaults['routine_change']['description'] ?? null;
+        if (!empty($sDescription)) {
+            $this->Set('description', $sDescription);
+        }
+    }]]></code>
+                </method>
+
+                <!-- set some default values on transition -->
+                <method id="PrefillTransitionForm">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <arguments>
+                        <argument id="1">
+                            <type>reference</type>
+                            <mandatory>true</mandatory>
+                        </argument>
+                    </arguments>
+                    <code><![CDATA[
+    public function PrefillTransitionForm(&$aContextParam)
+    {
+        parent::PrefillTransitionForm($aContextParam);
+
+        if ($aContextParam['stimulus'] == 'ev_assign') {
+
+            $oConf = Metamodel::GetConfig();
+            $aChangeDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'change_defaults', array());
+
+            $iSupervisorGroupId = $aChangeDefaults['routine_change']['supervisor_group_id'] ?? $aChangeDefaults['supervisor_group_id'] ?? 0;
+            if ($iSupervisorGroupId > 0) {
+                $this->Set('supervisor_group_id', $iSupervisorGroupId);
+                if (array_key_exists('supervisor_group_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['supervisor_group_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+
+            $iSupervisorId = $aChangeDefaults['routine_change']['supervisor_id'] ?? $aChangeDefaults['supervisor_id'] ?? 0;
+            if ($iSupervisorId > 0) {
+                $this->Set('supervisor_id', $iSupervisorId);
+                if (array_key_exists('supervisor_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['supervisor_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+
+            $iManagerGroupId = $aChangeDefaults['routine_change']['manager_group_id'] ?? $aChangeDefaults['manager_group_id'] ?? 0;
+            if ($iManagerGroupId > 0) {
+                $this->Set('manager_group_id', $iManagerGroupId);
+                if (array_key_exists('manager_group_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['manager_group_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+
+            $iManagerId = $aChangeDefaults['routine_change']['manager_id'] ?? $aChangeDefaults['manager_id'] ?? 0;
+            if ($iManagerId > 0) {
+                $this->Set('manager_id', $iManagerId);
+                if (array_key_exists('manager_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['manager_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+        }
+    }]]></code>
+                </method>
+            </methods>
+        </class>
+        <class id="NormalChange" _delta="must_exist">
+            <methods>
+                <!-- set some default values -->
+                <method id="PrefillCreationForm">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code><![CDATA[
+    public function PrefillCreationForm(&$aContextParam)
+    {
+        parent::PrefillCreationForm($aContextParam);
+
+        $oConf = Metamodel::GetConfig();
+        $aChangeDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'change_defaults', array());
+
+        $sDescription = $aChangeDefaults['normal_change']['description'] ?? null;
+        if (!empty($sDescription)) {
+            $this->Set('description', $sDescription);
+        }
+    }]]></code>
+                </method>
+                <!-- set some default values on transition -->
+                <method id="PrefillTransitionForm">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <arguments>
+                        <argument id="1">
+                            <type>reference</type>
+                            <mandatory>true</mandatory>
+                        </argument>
+                    </arguments>
+                    <code><![CDATA[
+    public function PrefillTransitionForm(&$aContextParam)
+    {
+        parent::PrefillTransitionForm($aContextParam);
+
+        if ($aContextParam['stimulus'] == 'ev_validate') {
+
+            $oConf = Metamodel::GetConfig();
+            $aChangeDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'change_defaults', array());
+
+            $iSupervisorGroupId = $aChangeDefaults['normal_change']['supervisor_group_id'] ?? $aChangeDefaults['supervisor_group_id'] ?? 0;
+            if ($iSupervisorGroupId > 0) {
+                $this->Set('supervisor_group_id', $iSupervisorGroupId);
+                if (array_key_exists('supervisor_group_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['supervisor_group_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+
+            $iManagerGroupId = $aChangeDefaults['normal_change']['manager_group_id'] ?? $aChangeDefaults['manager_group_id'] ?? 0;
+            if ($iManagerGroupId > 0) {
+                $this->Set('manager_group_id', $iManagerGroupId);
+                if (array_key_exists('manager_group_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['manager_group_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+
+            $this->Set('acceptance_date', date('Y-m-d H:i:s'));
+            if (array_key_exists('acceptance_date', $aContextParam['expected_attributes'])) {
+                $aContextParam['expected_attributes']['acceptance_date'] |= OPT_ATT_MUSTPROMPT;
+            }
+        } elseif ($aContextParam['stimulus'] == 'ev_assign') {
+
+            $oConf = Metamodel::GetConfig();
+            $aChangeDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'change_defaults', array());
+
+            $iSupervisorId = $aChangeDefaults['normal_change']['supervisor_id'] ?? $aChangeDefaults['supervisor_id'] ?? 0;
+            if ($iSupervisorId > 0) {
+                $this->Set('supervisor_id', $iSupervisorId);
+                if (array_key_exists('supervisor_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['supervisor_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+
+            $iManagerId = $aChangeDefaults['normal_change']['manager_id'] ?? $aChangeDefaults['manager_id'] ?? 0;
+            if ($iManagerId > 0) {
+                $this->Set('manager_id', $iManagerId);
+                if (array_key_exists('manager_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['manager_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+        } elseif ($aContextParam['stimulus'] == 'ev_approve') {
+
+            $this->Set('approval_date', date('Y-m-d H:i:s'));
+            if (array_key_exists('approval_date', $aContextParam['expected_attributes'])) {
+                $aContextParam['expected_attributes']['approval_date'] |= OPT_ATT_MUSTPROMPT;
+            }
+        }
+    }]]></code>
+                </method>
+            </methods>
+        </class>
+        <class id="EmergencyChange" _delta="must_exist">
+            <methods>
+                <!-- set some default values -->
+                <method id="PrefillCreationForm">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code><![CDATA[
+    public function PrefillCreationForm(&$aContextParam)
+    {
+        parent::PrefillCreationForm($aContextParam);
+
+        $oConf = Metamodel::GetConfig();
+        $aChangeDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'change_defaults', array());
+
+        $sDescription = $aChangeDefaults['emergency_change']['description'] ?? null;
+        if (!empty($sDescription)) {
+            $this->Set('description', $sDescription);
+        }
+    }]]></code>
+                </method>
+                <!-- set some default values on transition -->
+                <method id="PrefillTransitionForm">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <arguments>
+                        <argument id="1">
+                            <type>reference</type>
+                            <mandatory>true</mandatory>
+                        </argument>
+                    </arguments>
+                    <code><![CDATA[
+    public function PrefillTransitionForm(&$aContextParam)
+    {
+        parent::PrefillTransitionForm($aContextParam);
+
+        if ($aContextParam['stimulus'] == 'ev_assign') {
+
+            $oConf = Metamodel::GetConfig();
+            $aChangeDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'change_defaults', array());
+
+            $iSupervisorGroupId = $aChangeDefaults['emergency_change']['supervisor_group_id'] ?? $aChangeDefaults['supervisor_group_id'] ?? 0;
+            if ($iSupervisorGroupId > 0) {
+                $this->Set('supervisor_group_id', $iSupervisorGroupId);
+                if (array_key_exists('supervisor_group_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['supervisor_group_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+
+            $iSupervisorId = $aChangeDefaults['emergency_change']['supervisor_id'] ?? $aChangeDefaults['supervisor_id'] ?? 0;
+            if ($iSupervisorId > 0) {
+                $this->Set('supervisor_id', $iSupervisorId);
+                if (array_key_exists('supervisor_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['supervisor_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+
+            $iManagerGroupId = $aChangeDefaults['emergency_change']['manager_group_id'] ?? $aChangeDefaults['manager_group_id'] ?? 0;
+            if ($iManagerGroupId > 0) {
+                $this->Set('manager_group_id', $iManagerGroupId);
+                if (array_key_exists('manager_group_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['manager_group_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+
+            $iManagerId = $aChangeDefaults['emergency_change']['manager_id'] ?? $aChangeDefaults['manager_id'] ?? 0;
+            if ($iManagerId > 0) {
+                $this->Set('manager_id', $iManagerId);
+                if (array_key_exists('manager_id', $aContextParam['expected_attributes'])) {
+                    $aContextParam['expected_attributes']['manager_id'] |= OPT_ATT_MUSTPROMPT;
+                }
+            }
+        } elseif ($aContextParam['stimulus'] == 'ev_approve') {
+
+            $this->Set('approval_date', date('Y-m-d H:i:s'));
+            if (array_key_exists('approval_date', $aContextParam['expected_attributes'])) {
+                $aContextParam['expected_attributes']['approval_date'] |= OPT_ATT_MUSTPROMPT;
+            }
+        }
+    }]]></code>
+                </method>
+            </methods>
+        </class>
+        <class id="UserRequest" _delta="must_exist">
+            <fields>
+                <field id="impact" _delta="must_exist">
+                    <!-- set default impact to "a person"-->
+                    <default_value _delta="redefine">3</default_value>
+                </field>
+            </fields>
+            <methods>
+                <!-- set some default values -->
+                <method id="PrefillCreationForm">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code><![CDATA[
+    public function PrefillCreationForm(&$aContextParam)
+    {
+        parent::PrefillCreationForm($aContextParam);
+
+        $oConf = Metamodel::GetConfig();
+        $aTicketDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'ticket_defaults', array());
+        $iOrgId = $aTicketDefaults['org_id'];
+
+        $sOrgQuery = 'SELECT Organization WHERE id = :orgid';
+        $oOrgSet = new DBObjectSet(DBObjectSearch::FromOQL($sOrgQuery), array(), array('orgid' => $iOrgId));
+        if ($oOrgSet->Count() > 0) {
+            $oOrg = $oOrgSet->Fetch();
+            $this->Set('org_id', $oOrg->Get('id'));
+        }
+    }]]></code>
+                </method>
+            </methods>
+        </class>
+        <class id="Incident" _delta="must_exist">
+            <fields>
+                <field id="impact" _delta="must_exist">
+                    <!-- set default impact to "a person"-->
+                    <default_value _delta="redefine">3</default_value>
+                </field>
+            </fields>
+            <methods>
+                <!-- set some default values -->
+                <method id="PrefillCreationForm">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code><![CDATA[
+    public function PrefillCreationForm(&$aContextParam)
+    {
+        parent::PrefillCreationForm($aContextParam);
+
+        $oConf = Metamodel::GetConfig();
+        $aTicketDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'ticket_defaults', array());
+        $iOrgId = $aTicketDefaults['org_id'];
+
+        $sOrgQuery = 'SELECT Organization WHERE id = :orgid';
+        $oOrgSet = new DBObjectSet(DBObjectSearch::FromOQL($sOrgQuery), array(), array('orgid' => $iOrgId));
+        if ($oOrgSet->Count() > 0) {
+            $oOrg = $oOrgSet->Fetch();
+            $this->Set('org_id', $oOrg->Get('id'));
+        }
+    }]]></code>
+                </method>
+            </methods>
+        </class>
+    </classes>
+    <menus>
+        <!-- Add Dashlet for upcoming changes -->
+        <menu id="Change:Overview" xsi:type="DashboardMenuNode" _delta="must_exist">
+            <definition>
+                <cells>
+                    <cell id="4" _delta="define">
+                        <rank>4</rank>
+                        <dashlets>
+                            <dashlet id="5" xsi:type="DashletObjectList">
+                                <rank>0</rank>
+                                <title>UI-ChangeManagementOverview-Next-7-days</title>
+                                <query><![CDATA[SELECT Change WHERE start_date > DATE_SUB(NOW(), INTERVAL 1 DAY) AND start_date < DATE_ADD(NOW(), INTERVAL 7 DAY)]]></query>
+                                <menu>false</menu>
+                            </dashlet>
+                        </dashlets>
+                    </cell>
+                </cells>
+            </definition>
+        </menu>
+    </menus>
+</itop_design>

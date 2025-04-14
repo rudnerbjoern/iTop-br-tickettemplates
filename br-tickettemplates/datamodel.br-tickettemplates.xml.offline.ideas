@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="3.1">
+    <!--
+    * @copyright   Copyright (C) 2024 Björn Rudner
+    * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
+    -->
+    <classes>
+        <class id="RoutineChangeTemplate" _delta="define">
+            <parent>RoutineChange</parent>
+            <properties>
+                <category>bizmodel,searchable,changemgmt</category>
+                <abstract>false</abstract>
+                <key_type>autoincrement</key_type>
+                <db_table>change_template_routine</db_table>
+                <db_key_field>id</db_key_field>
+                <db_final_class_field />
+                <naming>
+                    <attributes>
+                        <attribute id="ref" />
+                    </attributes>
+                    <complementary_attributes>
+                        <attribute id="title" />
+                    </complementary_attributes>
+                </naming>
+                <style>
+                    <icon>../../images/icons/icons8-change-routine.svg</icon>
+                </style>
+                <reconciliation>
+                    <attributes>
+                        <attribute id="ref" />
+                    </attributes>
+                </reconciliation>
+                <order>
+                    <columns>
+                        <column id="ref" ascending="false" />
+                    </columns>
+                </order>
+            </properties>
+            <fields />
+            <methods>
+                <method id="GetTicketRefFormat">
+                    <static>true</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code>
+                        <![CDATA[public static function GetTicketRefFormat()
+                        {
+                            return 'CT-%06d';
+                        }]]>
+                    </code>
+                </method>
+                <method id="GetAttributeFlags" _delta="define">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code>
+                        <![CDATA[public function GetAttributeFlags($sAttCode, &$aReasons = array(), $sTargetState = '')
+                        {
+                            // Force the TicketRef field to be read-only, preventing it to be written
+                            if (($sAttCode == 'ref'))
+                                return(OPT_ATT_READONLY | parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState));
+                            return parent::GetAttributeFlags($sAttCode, $aReasons, $sTargetState);
+                        }]]>
+                    </code>
+                </method>
+                <method id="GetInitialStateAttributeFlags" _delta="define">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code>
+                        <![CDATA[public function GetInitialStateAttributeFlags($sAttCode, &$aReasons = array())
+                        {
+                            // Hide the TicketRef field in object creation form
+                            if (($sAttCode == 'ref'))
+                                return(OPT_ATT_HIDDEN | parent::GetInitialStateAttributeFlags($sAttCode, $aReasons));
+                            return parent::GetInitialStateAttributeFlags($sAttCode, $aReasons);
+                        }]]>
+                    </code>
+                </method>
+            </methods>
+            <presentation>
+                <details>
+                    <items>
+                        <item id="workorders_list">
+                            <rank>30</rank>
+                        </item>
+                        <item id="col:col1">
+                            <rank>80</rank>
+                            <items>
+                                <item id="fieldset:Ticket:baseinfo">
+                                    <rank>10</rank>
+                                    <items>
+                                        <item id="ref">
+                                            <rank>10</rank>
+                                        </item>
+                                        <item id="org_id">
+                                            <rank>20</rank>
+                                        </item>
+                                        <item id="status">
+                                            <rank>30</rank>
+                                        </item>
+                                        <item id="title">
+                                            <rank>40</rank>
+                                        </item>
+                                        <item id="description">
+                                            <rank>50</rank>
+                                        </item>
+                                    </items>
+                                </item>
+                                <item id="fieldset:Ticket:contact">
+                                    <rank>20</rank>
+                                    <items>
+                                        <item id="caller_id">
+                                            <rank>10</rank>
+                                        </item>
+                                        <item id="team_id">
+                                            <rank>20</rank>
+                                        </item>
+                                        <item id="agent_id">
+                                            <rank>30</rank>
+                                        </item>
+                                        <item id="supervisor_group_id">
+                                            <rank>40</rank>
+                                        </item>
+                                        <item id="supervisor_id">
+                                            <rank>50</rank>
+                                        </item>
+                                        <item id="manager_group_id">
+                                            <rank>60</rank>
+                                        </item>
+                                        <item id="manager_id">
+                                            <rank>70</rank>
+                                        </item>
+                                    </items>
+                                </item>
+                            </items>
+                        </item>
+                        <item id="col:col2">
+                            <rank>90</rank>
+                            <items>
+                                <item id="fieldset:Ticket:resolution">
+                                    <rank>10</rank>
+                                    <items>
+                                        <item id="reason">
+                                            <rank>10</rank>
+                                        </item>
+                                        <item id="impact">
+                                            <rank>20</rank>
+                                        </item>
+                                        <item id="outage">
+                                            <rank>30</rank>
+                                        </item>
+                                        <item id="fallback">
+                                            <rank>40</rank>
+                                        </item>
+                                    </items>
+                                </item>
+                                <item id="fieldset:Ticket:relation">
+                                    <rank>20</rank>
+                                    <items>
+                                        <item id="parent_id">
+                                            <rank>10</rank>
+                                        </item>
+                                    </items>
+                                </item>
+                            </items>
+                        </item>
+                    </items>
+                </details>
+                <search>
+                    <items>
+                        <item id="ref">
+                            <rank>10</rank>
+                        </item>
+                        <item id="org_id">
+                            <rank>20</rank>
+                        </item>
+                        <item id="status">
+                            <rank>30</rank>
+                        </item>
+                        <item id="operational_status">
+                            <rank>35</rank>
+                        </item>
+                        <item id="title">
+                            <rank>40</rank>
+                        </item>
+                        <item id="description">
+                            <rank>50</rank>
+                        </item>
+                        <item id="caller_id">
+                            <rank>60</rank>
+                        </item>
+                        <item id="team_id">
+                            <rank>70</rank>
+                        </item>
+                        <item id="agent_id">
+                            <rank>80</rank>
+                        </item>
+                        <item id="supervisor_group_id">
+                            <rank>90</rank>
+                        </item>
+                        <item id="supervisor_id">
+                            <rank>100</rank>
+                        </item>
+                        <item id="manager_group_id">
+                            <rank>110</rank>
+                        </item>
+                        <item id="manager_id">
+                            <rank>120</rank>
+                        </item>
+                        <item id="reason">
+                            <rank>130</rank>
+                        </item>
+                        <item id="impact">
+                            <rank>140</rank>
+                        </item>
+                        <item id="outage">
+                            <rank>150</rank>
+                        </item>
+                        <item id="parent_id">
+                            <rank>160</rank>
+                        </item>
+                        <item id="creation_date">
+                            <rank>170</rank>
+                        </item>
+                        <item id="start_date">
+                            <rank>180</rank>
+                        </item>
+                        <item id="end_date">
+                            <rank>190</rank>
+                        </item>
+                        <item id="last_update">
+                            <rank>200</rank>
+                        </item>
+                        <item id="close_date">
+                            <rank>210</rank>
+                        </item>
+                    </items>
+                </search>
+                <list>
+                    <items>
+                        <item id="finalclass">
+                            <rank>10</rank>
+                        </item>
+                        <item id="title">
+                            <rank>20</rank>
+                        </item>
+                        <item id="org_id">
+                            <rank>30</rank>
+                        </item>
+                        <item id="start_date">
+                            <rank>40</rank>
+                        </item>
+                        <item id="end_date">
+                            <rank>50</rank>
+                        </item>
+                        <item id="status">
+                            <rank>60</rank>
+                        </item>
+                        <item id="agent_id">
+                            <rank>70</rank>
+                        </item>
+                    </items>
+                </list>
+            </presentation>
+        </class>
+    </classes>
+    <menus>
+        <menu id="RoutineChangeTemplates" xsi:type="OQLMenuNode" _delta="define">
+            <rank>10</rank>
+            <parent>Change:Shortcuts</parent>
+            <oql><![CDATA[SELECT RoutineChangeTemplate]]></oql>
+            <do_search />
+            <auto_reload>fast</auto_reload>
+        </menu>
+    </menus>
+    <user_rights>
+        <groups>
+            <group id="ChangeTemplate" _delta="define">
+                <classes>
+                    <class id="RoutineChangeTemplate" />
+                </classes>
+            </group>
+        </groups>
+        <profiles>
+            <profile id="7" _delta="must_exist">
+                <!-- Change Implementor -->
+                <groups>
+                    <group id="ChangeTemplate" _delta="define">
+                        <actions>
+                            <action id="action:write">allow</action>
+                            <action id="action:bulk write">allow</action>
+                        </actions>
+                    </group>
+                </groups>
+            </profile>
+            <profile id="8" _delta="must_exist">
+                <!-- Change Supervisor -->
+                <groups>
+                    <group id="ChangeTemplate" _delta="define">
+                        <actions>
+                            <action id="action:write">allow</action>
+                            <action id="action:bulk write">allow</action>
+                        </actions>
+                    </group>
+                </groups>
+            </profile>
+            <profile id="9" _delta="must_exist">
+                <!-- Change Approver -->
+                <groups>
+                    <group id="ChangeTemplate" _delta="define">
+                        <actions>
+                            <action id="action:write">allow</action>
+                            <action id="action:bulk write">allow</action>
+                        </actions>
+                    </group>
+                </groups>
+            </profile>
+        </profiles>
+    </user_rights>
+</itop_design>
