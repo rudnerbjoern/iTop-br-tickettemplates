@@ -20,6 +20,8 @@ This module modifies the default behavior of ticket creation in iTop. It allows 
 - Default value for `org_id`
 - Default value for `description`
   (can be overridden by child classes)
+- Default `risk_analysis`
+  (can be overridden by child classes)
 
 ### 🔄 RoutineChange
 
@@ -33,6 +35,7 @@ This module modifies the default behavior of ticket creation in iTop. It allows 
 ### ⚙️ NormalChange
 
 - Default `description` (inherits or overridden)
+- Default `risk_analysis` (inherits or overridden)
 - Default values for the **"Validate"** stage:
   - `supervisor_group_id`
   - `manager_group_id`
@@ -46,6 +49,7 @@ This module modifies the default behavior of ticket creation in iTop. It allows 
 ### 🚨 EmergencyChange
 
 - Default `description` (inherits or overridden)
+- Default `risk_analysis` (inherits or overridden)
 - Default values for the **"Assign"** stage:
   - `supervisor_group_id`
   - `supervisor_id`
@@ -82,15 +86,16 @@ You can customize default values via your iTop configuration file (`config-itop.
 $MyModuleSettings = array(
     'br-tickettemplates' => array(
         'ticket_defaults' => array(
-            'org_id' => '2',
+            'org_id' => 2,
         ),
         'change_defaults' => array(
-            'org_id' => '2',
+            'org_id' => 2,
             'description' => '<p>Default Change Template 1...</p><p>Template 2...</p>',
-            'supervisor_group_id' => '10',
-            'supervisor_id' => '25',
-            'manager_group_id' => '11',
-            'manager_id' => '26',
+            'risk_analysis' => '<p>Default Risk Analysis Template 1...</p><p>Template 2...</p>',
+            'supervisor_group_id' => 10,
+            'supervisor_id' => 25,
+            'manager_group_id' => 11,
+            'manager_id' => 26,
             'routine_change' => array(
                 'description' => '<p>Routine Change Template 1...</p>',
             ),
@@ -99,10 +104,11 @@ $MyModuleSettings = array(
             ),
             'emergency_change' => array(
                 'description' => '<p>Emergency Change Template 1...</p>',
-                'supervisor_group_id' => '51',
-                'supervisor_id' => '33',
-                'manager_group_id' => '54',
-                'manager_id' => '34',
+                'risk_analysis' => '<p>Risk Analysis Template 1...</p>',
+                'supervisor_group_id' => 51,
+                'supervisor_id' => 33,
+                'manager_group_id' => 54,
+                'manager_id' => 34,
             ),
         ),
     ),

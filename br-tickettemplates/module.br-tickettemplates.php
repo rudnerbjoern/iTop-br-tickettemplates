@@ -3,14 +3,15 @@
 /**
  * @copyright   Copyright (C) 2025 Björn Rudner
  * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
- * @version     2025-04-11
+ * @version     2025-09-04
  *
  * iTop module definition file
  */
 
+/** @disregard P1009 Undefined type SetupWebPage */
 SetupWebPage::AddModule(
     __FILE__, // Path to the current file, all other file names are relative to the directory containing this file
-    'br-tickettemplates/0.0.1',
+    'br-tickettemplates/0.0.3',
     array(
         // Identification
         //
@@ -47,39 +48,6 @@ SetupWebPage::AddModule(
 
         // Default settings
         //
-        'settings' => array(
-            'ticket_defaults' => array(
-                'org_id' => '2',
-            ),
-            'change_defaults' => array(
-                'org_id' => '2',
-                'description' => '<p>Default Change Template 1...</p><p>Template 2...</p>',
-                'supervisor_group_id' => '0',
-                'supervisor_id' => '0',
-                'manager_group_id' => '0',
-                'manager_id' => '0',
-                'routine_change' => array(
-                    'description' => '<p>Routine Change Template 1...</p>',
-                    'supervisor_group_id' => '0',
-                    'supervisor_id' => '0',
-                    'manager_group_id' => '0',
-                    'manager_id' => '0',
-                ),
-                'normal_change' => array(
-                    'description' => '<p>Normal Change Template 1...</p>',
-                    'supervisor_group_id' => '0',
-                    'supervisor_id' => '0',
-                    'manager_group_id' => '0',
-                    'manager_id' => '0',
-                ),
-                'emergency_change' => array(
-                    'description' => '<p>Emergency Change Template 1...</p>',
-                    'supervisor_group_id' => '0',
-                    'supervisor_id' => '0',
-                    'manager_group_id' => '0',
-                    'manager_id' => '0',
-                ),
-            ),
-        ),
+        'settings' => array(),
     )
 );
