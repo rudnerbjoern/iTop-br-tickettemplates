@@ -442,4 +442,44 @@
             </definition>
         </menu>
     </menus>
+    <module_parameters>
+        <parameters id="br-tickettemplates" _delta="define">
+            <ticket_defaults type="hash">
+                <org_id type="int">2</org_id>
+            </ticket_defaults>
+            <change_defaults type="hash">
+                <org_id type="int">2</org_id>
+                <description type="string"><![CDATA[<p>Default Change Template 1...</p><p>Template 2...</p>]]></description>
+                <risk_analysis type="string"><![CDATA[<p>Default Risk Analysis Template 1...</p><p>Template 2...</p>]]></risk_analysis>
+                <supervisor_group_id type="int">0</supervisor_group_id>
+                <supervisor_id type="int">0</supervisor_id>
+                <manager_group_id type="int">0</manager_group_id>
+                <manager_id type="int">0</manager_id>
+                <routine_change type="hash">
+                    <description type="string"><![CDATA[<p>Routine Change Template 1...</p>]]></description>
+                    <risk_analysis type="string" />
+                    <supervisor_group_id type="int">0</supervisor_group_id>
+                    <supervisor_id type="int">0</supervisor_id>
+                    <manager_group_id type="int">0</manager_group_id>
+                    <manager_id type="int">0</manager_id>
+                </routine_change>
+                <normal_change type="hash">
+                    <description type="string"><![CDATA[<p>Normal Change Template 1...</p>]]></description>
+                    <risk_analysis type="string" />
+                    <supervisor_group_id type="int">0</supervisor_group_id>
+                    <supervisor_id type="int">0</supervisor_id>
+                    <manager_group_id type="int">0</manager_group_id>
+                    <manager_id type="int">0</manager_id>
+                </normal_change>
+                <emergency_change type="hash">
+                    <description type="string"><![CDATA[<p>Normal Change Template 1...</p>]]></description>
+                    <risk_analysis type="string" />
+                    <supervisor_group_id type="int">0</supervisor_group_id>
+                    <supervisor_id type="int">0</supervisor_id>
+                    <manager_group_id type="int">0</manager_group_id>
+                    <manager_id type="int">0</manager_id>
+                </emergency_change>
+            </change_defaults>
+        </parameters>
+    </module_parameters>
 </itop_design>

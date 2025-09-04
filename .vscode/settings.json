@@ -8,5 +8,8 @@
         "MUSTPROMPT",
         "orgid",
         "tickettemplates"
-    ]
+    ],
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "modificationsIfAvailable",
+    "editor.formatOnPaste": true
 }
