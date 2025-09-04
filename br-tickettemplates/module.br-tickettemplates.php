@@ -55,12 +55,14 @@ SetupWebPage::AddModule(
             'change_defaults' => array(
                 'org_id' => '2',
                 'description' => '<p>Default Change Template 1...</p><p>Template 2...</p>',
+                'risk_analysis' => '<p>Default Risk Analysis Template 1...</p><p>Template 2...</p>',
                 'supervisor_group_id' => '0',
                 'supervisor_id' => '0',
                 'manager_group_id' => '0',
                 'manager_id' => '0',
                 'routine_change' => array(
                     'description' => '<p>Routine Change Template 1...</p>',
+                    'risk_analysis' => '',
                     'supervisor_group_id' => '0',
                     'supervisor_id' => '0',
                     'manager_group_id' => '0',
@@ -68,6 +70,7 @@ SetupWebPage::AddModule(
                 ),
                 'normal_change' => array(
                     'description' => '<p>Normal Change Template 1...</p>',
+                    'risk_analysis' => '',
                     'supervisor_group_id' => '0',
                     'supervisor_id' => '0',
                     'manager_group_id' => '0',
@@ -75,6 +78,7 @@ SetupWebPage::AddModule(
                 ),
                 'emergency_change' => array(
                     'description' => '<p>Emergency Change Template 1...</p>',
+                    'risk_analysis' => '',
                     'supervisor_group_id' => '0',
                     'supervisor_id' => '0',
                     'manager_group_id' => '0',

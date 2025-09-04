@@ -40,11 +40,21 @@
             $this->Set('org_id', $oOrg->Get('id'));
         }
 
-        $sDescription = $aChangeDefaults['description'] ?? null;
-        if (!empty($sDescription)) {
-            $this->Set('description', $sDescription);
+        if (MetaModel::IsValidAttCode(get_class($this), 'description')) {
+            $sDescription = $aChangeDefaults['description'] ?? null;
+            if (!empty($sDescription)) {
+                $this->Set('description', $sDescription);
+            }
         }
-    }]]></code>
+
+        if (MetaModel::IsValidAttCode(get_class($this), 'risk_analysis')) {
+            $sRiskAnalysis = $aChangeDefaults['risk_analysis'] ?? null;
+            if (!empty($sRiskAnalysis)) {
+                $this->Set('risk_analysis', $sRiskAnalysis);
+            }
+        }
+    }
+  ]]></code>
                 </method>
             </methods>
         </class>
@@ -63,11 +73,20 @@
         $oConf = Metamodel::GetConfig();
         $aChangeDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'change_defaults', array());
 
-        $sDescription = $aChangeDefaults['routine_change']['description'] ?? null;
-        if (!empty($sDescription)) {
-            $this->Set('description', $sDescription);
+        if (MetaModel::IsValidAttCode(get_class($this), 'description')) {
+            $sDescription = $aChangeDefaults['routine_change']['description'] ?? null;
+            if (!empty($sDescription)) {
+                $this->Set('description', $sDescription);
+            }
         }
-    }]]></code>
+        if (MetaModel::IsValidAttCode(get_class($this), 'risk_analysis')) {
+            $sRiskAnalysis = $aChangeDefaults['routine_change']['risk_analysis'] ?? null;
+            if (!empty($sRiskAnalysis)) {
+                $this->Set('risk_analysis', $sRiskAnalysis);
+            }
+        }
+    }
+  ]]></code>
                 </method>
 
                 <!-- set some default values on transition -->
@@ -123,7 +142,8 @@
                 }
             }
         }
-    }]]></code>
+    }
+  ]]></code>
                 </method>
             </methods>
         </class>
@@ -142,11 +162,20 @@
         $oConf = Metamodel::GetConfig();
         $aChangeDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'change_defaults', array());
 
-        $sDescription = $aChangeDefaults['normal_change']['description'] ?? null;
-        if (!empty($sDescription)) {
-            $this->Set('description', $sDescription);
+        if (MetaModel::IsValidAttCode(get_class($this), 'description')) {
+            $sDescription = $aChangeDefaults['normal_change']['description'] ?? null;
+            if (!empty($sDescription)) {
+                $this->Set('description', $sDescription);
+            }
         }
-    }]]></code>
+        if (MetaModel::IsValidAttCode(get_class($this), 'risk_analysis')) {
+            $sRiskAnalysis = $aChangeDefaults['normal_change']['risk_analysis'] ?? null;
+            if (!empty($sRiskAnalysis)) {
+                $this->Set('risk_analysis', $sRiskAnalysis);
+            }
+        }
+    }
+  ]]></code>
                 </method>
                 <!-- set some default values on transition -->
                 <method id="PrefillTransitionForm">
@@ -216,7 +245,8 @@
                 $aContextParam['expected_attributes']['approval_date'] |= OPT_ATT_MUSTPROMPT;
             }
         }
-    }]]></code>
+    }
+  ]]></code>
                 </method>
             </methods>
         </class>
@@ -235,11 +265,20 @@
         $oConf = Metamodel::GetConfig();
         $aChangeDefaults = $oConf->GetModuleSetting('br-tickettemplates', 'change_defaults', array());
 
-        $sDescription = $aChangeDefaults['emergency_change']['description'] ?? null;
-        if (!empty($sDescription)) {
-            $this->Set('description', $sDescription);
+        if (MetaModel::IsValidAttCode(get_class($this), 'description')) {
+            $sDescription = $aChangeDefaults['emergency_change']['description'] ?? null;
+            if (!empty($sDescription)) {
+                $this->Set('description', $sDescription);
+            }
         }
-    }]]></code>
+        if (MetaModel::IsValidAttCode(get_class($this), 'risk_analysis')) {
+            $sRiskAnalysis = $aChangeDefaults['emergency_change']['risk_analysis'] ?? null;
+            if (!empty($sRiskAnalysis)) {
+                $this->Set('risk_analysis', $sRiskAnalysis);
+            }
+        }
+    }
+  ]]></code>
                 </method>
                 <!-- set some default values on transition -->
                 <method id="PrefillTransitionForm">
@@ -300,7 +339,8 @@
                 $aContextParam['expected_attributes']['approval_date'] |= OPT_ATT_MUSTPROMPT;
             }
         }
-    }]]></code>
+    }
+  ]]></code>
                 </method>
             </methods>
         </class>
@@ -332,7 +372,8 @@
             $oOrg = $oOrgSet->Fetch();
             $this->Set('org_id', $oOrg->Get('id'));
         }
-    }]]></code>
+    }
+  ]]></code>
                 </method>
             </methods>
         </class>
@@ -364,7 +405,8 @@
             $oOrg = $oOrgSet->Fetch();
             $this->Set('org_id', $oOrg->Get('id'));
         }
-    }]]></code>
+    }
+  ]]></code>
                 </method>
             </methods>
         </class>
