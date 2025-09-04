@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<itop_design version="3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/rudnerbjoern/iTop-schema/refs/heads/main/3.2/itop_design.xsd">
+<itop_design version="3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://rudnerbjoern.github.io/iTop-schema/3.2/itop_design.xsd">
     <!--
     * @copyright   Copyright (C) 2025 Björn Rudner
     * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
@@ -218,6 +218,10 @@
             if (array_key_exists('acceptance_date', $aContextParam['expected_attributes'])) {
                 $aContextParam['expected_attributes']['acceptance_date'] |= OPT_ATT_MUSTPROMPT;
             }
+
+            if (MetaModel::IsValidAttCode(get_class($this), 'risk_analysis')) {
+                $aContextParam['expected_attributes']['risk_analysis'] |= OPT_ATT_MUSTPROMPT;
+            }
         } elseif ($aContextParam['stimulus'] == 'ev_assign') {
 
             $oConf = Metamodel::GetConfig();
@@ -332,6 +336,13 @@
                     $aContextParam['expected_attributes']['manager_id'] |= OPT_ATT_MUSTPROMPT;
                 }
             }
+
+        } elseif ($aContextParam['stimulus'] == 'ev_plan') {
+
+            if (MetaModel::IsValidAttCode(get_class($this), 'risk_analysis')) {
+                $aContextParam['expected_attributes']['risk_analysis'] |= OPT_ATT_MUSTPROMPT;
+            }
+
         } elseif ($aContextParam['stimulus'] == 'ev_approve') {
 
             $this->Set('approval_date', date('Y-m-d H:i:s'));
